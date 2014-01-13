@@ -59,6 +59,38 @@ class ClassMetadataFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($constraints, $metadata->getConstraints());
     }
 
+    public function testDeferInheritanceConstraintsUntilParent()
+    {
+        $factory = new ClassMetadataFactory(new TestLoader());
+        $metadata = $factory->getMetadataFor('Symfony\Component\Validator\Tests\Fixtures\EntityInheritedInterface');
+
+        $constraints = array(
+            new ConstraintA(array('groups' => array(
+                'Default',
+                'EntityParent',
+                'Entity',
+                'EntityInheritedInterface'
+            ))),
+            new ConstraintA(array('groups' => array(
+                'Default',
+                'EntityInterface',
+                'Entity',
+                'EntityInheritedInterface'
+            ))),
+            new ConstraintA(array('groups' => array(
+                'Default',
+                'Entity',
+                'EntityInheritedInterface',
+            ))),
+             new ConstraintA(array('groups' => array(
+                'Default',
+                'EntityInheritedInterface'
+            ))),
+        );
+
+        $this->assertEquals($constraints, $metadata->getConstraints());
+    }
+
     public function testWriteMetadataToCache()
     {
         $cache = $this->getMock('Symfony\Component\Validator\Mapping\Cache\CacheInterface');

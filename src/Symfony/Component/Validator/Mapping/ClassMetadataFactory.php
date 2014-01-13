@@ -78,6 +78,11 @@ class ClassMetadataFactory implements MetadataFactoryInterface
             if ('Symfony\Component\Validator\GroupSequenceProviderInterface' === $interface->name) {
                 continue;
             }
+
+            // Defer loading inherited interface metadata until the parent is processed.
+            if($parent && in_array($interface->name, $parent->getInterfaceNames())) {
+                continue;
+            }
             $metadata->mergeConstraints($this->getMetadataFor($interface->name));
         }
 
